@@ -53,6 +53,7 @@ console.log(a instanceof Animal);
 console.log(f instanceof Animal);
 console.log(f instanceof Fish);
 console.log(f instanceof Object);
+console.log(a instanceof Fish);
 
 //
 console.log(a.age, a.weight);
