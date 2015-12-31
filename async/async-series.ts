@@ -1,6 +1,8 @@
 
 var async = require("async");
 
+var util = require("util");
+
 // simplest form
 async.series([
         function(callback) {
@@ -20,7 +22,7 @@ async.series([
         if (err)
             console.error("Error:" + err.message);
         else {
-            console.log("Done:" + results);
+            console.log("Done:" + util.inspect(results));
         }
     }
 );
@@ -52,8 +54,8 @@ async.series([
                 console.error("Error:" + err.message);
             else {
                 // order of results is not affected by time of completion
-                console.log("All done:" + results);
+                console.log("All done:" + util.inspect(results));
             }
         }
     );
-})(3000, 2000, 1000);
+})(1000, 500, 300);
