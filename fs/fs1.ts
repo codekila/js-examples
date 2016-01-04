@@ -41,6 +41,7 @@ function copyFile(from:string, to:string, cb) {
                     }
                 });
             },
+            // do read
             copyRead: ["openFrom", "openTo", function (callback, results) {
                 fs.fstat(results.openFrom, function (err, stat) {
                     if (!stat.isFile()) {
@@ -49,7 +50,7 @@ function copyFile(from:string, to:string, cb) {
                         console.log("start copying " + stat.size + " bytes");
                         buf = Buffer(stat.size); // bad for large files
 
-                        fs.read(results.openFrom, buf, 0, stat.size, null, function (err, bytesRead, b) {
+                        fs.read(results.openFrom, buf, 0, stat.size, null, function (err, bytesRead) {
                             console.log(bytesRead + " bytes read.");
                             if (err) {
                                 callback(err);
@@ -61,10 +62,11 @@ function copyFile(from:string, to:string, cb) {
                     }
                 })
             }],
+            // do write
             copyWrite: ["copyRead", function(callback, results) {
                 // write into the new file
                 console.log("start writing " + results.copyRead + " bytes");
-                fs.write(results.openTo, buf, 0, results.copyRead, function (err, bytesWritten, b) {
+                fs.write(results.openTo, buf, 0, results.copyRead, function (err, bytesWritten) {
                     console.log(bytesWritten + " bytes written.");
                     if (err) {
                         callback(err);
@@ -75,6 +77,7 @@ function copyFile(from:string, to:string, cb) {
                 });
             }]
         },
+        // done
         function (err, results) {
             if (err) {
                 console.error("Error:" + err.message);
