@@ -14,7 +14,7 @@ var fs = require("fs");
 var util = require("util");
 
 function copyFile(from:string, to:string, cb) {
-    var fdFrom, fdTo;
+    var buf:Buffer;
 
     async.auto({
             // open from for read
@@ -25,51 +25,52 @@ function copyFile(from:string, to:string, cb) {
                         callback(err);
                     }
                     else {
-                        fdFrom = f;
-                        callback(null, fdFrom);
+                        callback(null, f);
                     }
                 });
             },
             // open to for write
             openTo: function (callback) {
-                console.log("opening "+to);
+                console.log("opening " + to);
                 fs.open(to, 'w', function(err, f){
                     if (err) {
                         callback(err);
                     }
                     else {
-                        fdTo = f;
-                        callback(null, fdTo);
+                        callback(null, f);
                     }
                 });
             },
-            copy: ["openFrom", "openTo", function (callback) {
-                fs.fstat(fdFrom, function(err, stat){
+            copyRead: ["openFrom", "openTo", function (callback, results) {
+                fs.fstat(results.openFrom, function (err, stat) {
                     if (!stat.isFile()) {
                         callback(new Error("Not a file"));
                     } else {
                         console.log("start copying " + stat.size + " bytes");
-                        var buf = Buffer(stat.size); // bad for large files
+                        buf = Buffer(stat.size); // bad for large files
 
-                        fs.read(fdFrom, buf, 0, stat.size, null, function (err, bytesRead, b){
+                        fs.read(results.openFrom, buf, 0, stat.size, null, function (err, bytesRead, b) {
                             console.log(bytesRead + " bytes read.");
                             if (err) {
                                 callback(err);
                             }
                             else {
-                                // write into the new file
-                                console.log("start writing...");
-                                fs.write(fdTo, buf, 0, bytesRead, function (err, bytesWritten, b) {
-                                    console.log(bytesWritten + " bytes written.");
-                                    if (err) {
-                                        callback(err);
-                                    }
-                                    else {
-                                        callback(null, bytesWritten);
-                                    }
-                                });
+                                callback(null, bytesRead);
                             }
                         });
+                    }
+                })
+            }],
+            copyWrite: ["copyRead", function(callback, results) {
+                // write into the new file
+                console.log("start writing " + results.copyRead + " bytes");
+                fs.write(results.openTo, buf, 0, results.copyRead, function (err, bytesWritten, b) {
+                    console.log(bytesWritten + " bytes written.");
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(null, bytesWritten);
                     }
                 });
             }]
@@ -79,17 +80,17 @@ function copyFile(from:string, to:string, cb) {
                 console.error("Error:" + err.message);
             }
             // close both
-            else if (fdFrom) {
-                fs.close(fdFrom, function(err) {
+            else if (results.openFrom) {
+                fs.close(results.openFrom, function(err) {
                     if (err)
                         cb(err);
-                    else if (fdTo) {
-                        fs.close(fdTo, function (err) {
+                    else if (results.openTo) {
+                        fs.close(results.openTo, function (err) {
                             if (err)
                                 cb(err);
                             else {
                                 console.log("Done." + util.inspect(results));
-                                cb(null, results.copy);
+                                cb(null, results.copyWrite);
                             }
                         });
                     }
