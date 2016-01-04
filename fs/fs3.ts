@@ -5,52 +5,41 @@
 var async = require("async");
 var fs = require("fs");
 
-// copy 1
+// copy 1: with .on("data")
 function fileCopy1(from:string, to:string, cb) {
     var bytesWritten = 0;
     var streamRead = fs.createReadStream(from);
     var streamWrite = fs.createWriteStream(to);
 
-    streamRead.on("error", callback);
-    streamWrite.on("error", callback);
+    streamRead.on("error", cb);
+    streamWrite.on("error", cb);
 
-    streamRead.on("data", function(data) {
-        bytesWritten += data.length;
-        streamWrite.write(data);
+    streamRead.on("data", function(chunk) {
+        console.log("writting " + chunk.length + " bytes, " + bytesWritten + " written");
+        bytesWritten += chunk.length;
+
+        streamWrite.write(chunk);
     });
     streamRead.on("close", function() {
         streamWrite.close();
         cb(null, bytesWritten);
-        return;
     });
-
-    function callback(err) {
-        cb(err);
-        return;
-    }
 }
 
-// copy 2: with pipe
+// copy 2: with .pipe
 function fileCopy2(from:string, to:string, cb) {
-    var bytesWritten = 0;
     var streamRead = fs.createReadStream(from);
     var streamWrite = fs.createWriteStream(to);
 
-    streamRead.on("error", callback);
-    streamWrite.on("error", callback);
+    streamRead.on("error", cb);
+    streamWrite.on("error", cb);
 
     streamRead.pipe(streamWrite);
 
     streamRead.on("close", function() {
         streamWrite.close();
-        cb(null, bytesWritten);
-        return;
+        cb(null); // unable to provide the file size
     });
-
-    function callback(err) {
-        cb(err);
-        return;
-    }
 }
 
 fileCopy2("file1.txt", "file2.txt", function(err, bytes){
@@ -61,3 +50,4 @@ fileCopy2("file1.txt", "file2.txt", function(err, bytes){
         console.log("Copy done, " + bytes + " bytes copied.");
     }
 });
+
