@@ -5,8 +5,8 @@ var glob = require("glob");
 // current path
 console.log(path.resolve("."));
 
-// the path that this js file is located at
-console.log(__dirname);
+// the (static) path that this js file is located at
+console.log(__dirname + " : " + __filename);
 
 // check out argv[0] & argv[1] & ...
 console.log(util.inspect(process.argv));
