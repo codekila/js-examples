@@ -24,7 +24,7 @@ console.log(util.inspect(process.argv));
                 var idx:number = files[i].lastIndexOf("/");
                 var fileName:string = files[i].slice(idx + 1);
                 var pathName:string = files[i].slice(0, idx);
-                console.log(pathName + " : " + fileName);
+                console.log(pathName + " : " + fileName + ", ext=" + path.extname(fileName));
             }
         }
     });
