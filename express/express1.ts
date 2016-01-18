@@ -29,7 +29,13 @@ app.use(morgan('combined'))
 
 // match this
 app.get('/:dirName/:fileName.:extName', function(req, res) {
-    res.write('hello express world!\n');
+    // multiple write() followed by end()
+    // use flush() if needed
+    res.write('hello ');
+    for (var i=0;i<5;i++)
+        res.write('->' + i);
+    res.write('\n');
+    res.flush();
     res.end(util.inspect(req.params) + '\n');
 });
 // everything else goes to 404
