@@ -25,6 +25,9 @@ const child = cp.fork(__dirname + '/child_process2.js');
 child.on('message', (msg) => {
     "use strict";
     console.log('recv from child: ' + util.inspect(msg));
-});
+
+    // kill the child process
+    child.kill('SIGTERM');
+})
 
 child.send({key1: 'parent1', key2: 'parent2'});

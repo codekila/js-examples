@@ -15,3 +15,8 @@ process.on('message', (msg) => {
     console.log('sending back ' + util.inspect(obj));
     process.send(obj);
 });
+
+process.on('SIGTERM', () => {
+    console.log('child is going down...');
+    process.exit(0);
+});
