@@ -1,4 +1,8 @@
-var basicAuth = require('basic-auth');
+/// <reference path="../typings/tsd.d.ts" />
+
+let basicAuth = require('basic-auth');
+
+//import basicAuth from 'basic-auth';
 
 class HttpBasicAuth {
     private userName:string;
@@ -28,12 +32,12 @@ class HttpBasicAuth {
     }
 
     doBasicAuth = (req, res, next) => {
-        var unauthorized = (res) => {
+        let unauthorized = (res) => {
             res.setHeader('WWW-Authenticate', 'Basic realm=Authorization Required');
             return this.maxAttempt-- >0 ? res.sendStatus(401) : res.sendStatus(403);
         };
 
-        var user = basicAuth(req);
+        let user = basicAuth(req);
 
         if (!user || !this.getUserName()) {
             return unauthorized(res);
@@ -53,4 +57,4 @@ class HttpBasicAuth {
     }
 }
 
-export = HttpBasicAuth;
+module.exports = HttpBasicAuth;

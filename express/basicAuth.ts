@@ -2,13 +2,15 @@
     basic authentication
  */
 
-var util = require('util');
-var helpers = require('./helpers');
-var BasicAuth = require('../class/httpBasicAuth');
+/// <reference path="../typings/tsd.d.ts" />
 
-var bAuth = new BasicAuth('code','kila');
+let util = require('util');
+let helpers = require('./helpers');
+let BasicAuth = require('../class/httpBasicAuth');
 
-var morgan = require('morgan'),  // was express.logger
+let bAuth = new BasicAuth('code','kila');
+
+let morgan = require('morgan'),  // was express.logger
     favicon = require('serve-favicon'),
     express = require('express'),
     app = express();
