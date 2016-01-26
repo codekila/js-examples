@@ -28,6 +28,6 @@ child.on('message', (msg) => {
 
     // kill the child process
     child.kill('SIGTERM');
-})
+});
 
 child.send({key1: 'parent1', key2: 'parent2'});
