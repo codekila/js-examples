@@ -1,7 +1,10 @@
+/// <reference path="../typings/tsd.d.ts" />
+
 var process = require("process");
 var util = require("util");
 var readline = require("readline");
 
+console.log('pid = ' + process.pid);
 console.log("ENV = " + util.inspect(process.env));
 console.log("argv =" + util.inspect(process.argv));
 console.log("config =" + util.inspect(process.config));
