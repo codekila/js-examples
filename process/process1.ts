@@ -22,8 +22,8 @@ var rl = readline.createInterface({
 
 rl.question("What's your favorite?", function(ans) {
     console.log("You answered " + ans);
-
     rl.close();
+    process.exit(0);
 });
 
 // SIGINT
