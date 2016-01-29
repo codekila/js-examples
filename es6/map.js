@@ -2,6 +2,8 @@
 
 'use strict';
 
+require("babel-polyfill"); // needed for destructuring to work properly (in XXX-compiled.js)
+
 const util = require('util');
 const fs = require('fs');
 const _ = require('lodash');
@@ -26,13 +28,19 @@ fs.readFile(__dirname + '/../LICENSE', (err, data) => {
 
         console.log('map size = ' + map.size);
 
-        /*
-        // somehow destructuring doesn't work
-        for (let [key, value] of map.entries()) {
-            console.log(key + ' : ' + value + ' times');
-        }
-        */
 
+        // somehow destructuring doesn't work
+        let maxWord = '';
+        let maxCount = 0;
+        for (let [key, value] of map.entries()) {
+            //console.log('destructuring: ' + key + ' : ' + value + ' times');
+            if (value > maxCount) {
+                maxCount = value;
+                maxWord = key;
+            }
+        }
+
+        /*
         let maxWord = '';
         let maxCount = 0;
         map.forEach((value, key) => {
@@ -42,6 +50,7 @@ fs.readFile(__dirname + '/../LICENSE', (err, data) => {
                 maxWord = key;
             }
         });
+        */
 
         console.log('\'' + maxWord + '\' is counted the most(' + maxCount + ') times');
     }
